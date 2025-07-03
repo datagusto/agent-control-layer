@@ -109,7 +109,7 @@ rules:
   # Rule 2 – relevance check
   - name: "search_result_relevance"
     description: "The search tool must return results that are relevant to the user's query."
-    trigger_condition: "len([r for r in tool_output['results'] if r['score'] >= 0.5]) < 5"
+    trigger_condition: "len([r for r in tool_output['results'] if r['score'] >= 0.8]) < 5"
     instruction: "Ask the user to approve to use the results for further steps."
     priority: 2
 ```
