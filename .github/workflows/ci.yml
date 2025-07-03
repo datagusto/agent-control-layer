@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10", "3.11", "3.12"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v4
+
+    - name: Install dependencies
+      run: uv sync --all-extras
+
+    - name: Run ruff check
+      run: uv run --frozen ruff check .
+
+    - name: Run ruff format check
+      run: uv run --frozen ruff format --check .
+
+    - name: Run pyright
+      run: uv run --frozen pyright
+
+    - name: Run tests
+      run: uv run --frozen pytest --cov --cov-report=xml
+
+    - name: Upload coverage to Codecov
+      if: matrix.python-version == '3.11'
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: ./coverage.xml
+        fail_ci_if_error: false

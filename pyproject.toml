@@ -1,0 +1,85 @@
+[project]
+name = "agent-control-layer"
+version = "0.1.0"
+description = "Datagusto Agent Control Layer"
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "langchain-core>=0.3.67",
+    "langgraph>=0.5.1",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0.2",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.9.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "pre-commit>=4.0.0",
+    "pyright>=1.1.0",
+    "anyio>=4.0.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.7.19,<0.8.0"]
+build-backend = "uv_build"
+
+[tool.ruff]
+line-length = 88
+target-version = "py39"
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "E",     # pycodestyle errors
+    "W",     # pycodestyle warnings
+    "F",     # pyflakes
+    "I",     # isort
+    "N",     # pep8-naming
+    "UP",    # pyupgrade
+    "B",     # flake8-bugbear
+    "SIM",   # flake8-simplify
+    "C4",    # flake8-comprehensions
+    "TID",   # flake8-tidy-imports
+    "RUF",   # ruff-specific rules
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["agent_control_layer"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+addopts = [
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--strict-markers",
+    "-vv",
+]
+
+[tool.pyright]
+pythonVersion = "3.9"
+pythonPlatform = "All"
+typeCheckingMode = "standard"
+include = ["src", "tests"]
+exclude = ["**/__pycache__"]
+venvPath = "."
+venv = ".venv"
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnusedImport = true
+reportUnusedClass = true
+reportUnusedFunction = true
+reportUnusedVariable = true
+reportDuplicateImport = true
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+]
