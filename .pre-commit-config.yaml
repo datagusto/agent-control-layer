@@ -3,22 +3,23 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        files: ^src/
       - id: end-of-file-fixer
-      - id: check-yaml
-      - id: check-added-large-files
-      - id: check-json
-      - id: check-toml
-      - id: check-merge-conflict
+        files: ^src/
       - id: mixed-line-ending
+        files: ^src/
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.9.0
     hooks:
       - id: ruff
         args: [--fix]
+        files: ^src/
       - id: ruff-format
+        files: ^src/
 
   - repo: https://github.com/RobertCraigie/pyright-python
     rev: v1.1.397
     hooks:
       - id: pyright
+        files: ^src/

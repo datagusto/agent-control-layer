@@ -101,15 +101,21 @@ def build_control_layer_tools(state_class):
                 tool_output = json.loads(tool_output)  # type: ignore
 
             control_layer_result = control_layer(tool_name, tool_output)  # type: ignore
-            print("control_layer_result", control_layer_result)
-            instruction_message = (
-                f"[DATAGUSTO CONTROL LAYER DIRECTIVE] The tool {tool_name}'s output "
-                f"does not satisfy the data quality policy. Please follow the "
-                f"instruction: {control_layer_result['instruction']}"
-            )
 
-            return {"additional_instruction": instruction_message}
-        return {"additional_instruction": "No further instruction."}
+            if control_layer_result["instruction"]:
+                instruction_message = (
+                    f"[DATAGUSTO CONTROL LAYER DIRECTIVE] The tool {tool_name}'s "
+                    f"output does not satisfy the following policy: {control_layer_result['rule']['description']}. "  # noqa: E501
+                    f"Please follow the instruction: {control_layer_result['instruction']}"  # noqa: E501
+                )
+                return {
+                    "additional_instruction": instruction_message,
+                    "triggered_rule": control_layer_result["rule"],
+                }
+        return {
+            "additional_instruction": "No further instruction.",
+            "triggered_rule": None,
+        }
 
     return [
         control_layer_init,

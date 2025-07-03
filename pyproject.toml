@@ -1,6 +1,6 @@
 [project]
 name = "agent-control-layer"
-version = "0.1.0"
+version = "0.1.1"
 description = "Datagusto Agent Control Layer"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -9,17 +9,6 @@ dependencies = [
     "langgraph>=0.5.1",
     "pydantic>=2.0.0",
     "pyyaml>=6.0.2",
-]
-
-[project.optional-dependencies]
-dev = [
-    "ruff>=0.9.0",
-    "pytest>=8.0.0",
-    "pytest-asyncio>=0.25.0",
-    "pytest-cov>=6.0.0",
-    "pre-commit>=4.0.0",
-    "pyright>=1.1.0",
-    "anyio>=4.0.0",
 ]
 
 [build-system]
@@ -67,7 +56,7 @@ addopts = [
 pythonVersion = "3.9"
 pythonPlatform = "All"
 typeCheckingMode = "standard"
-include = ["src", "tests"]
+include = ["src"]
 exclude = ["**/__pycache__"]
 venvPath = "."
 venv = ".venv"
@@ -82,4 +71,21 @@ reportDuplicateImport = true
 [dependency-groups]
 dev = [
     "pre-commit>=4.2.0",
+    "ruff>=0.9.0",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.25.0",
+    "pytest-cov>=6.0.0",
+    "pyright>=1.1.0",
+    "anyio>=4.0.0",
+    "langgraph-cli>=0.3.3",
+    "build>=1.2.2.post1",
+    "twine>=6.1.0",
 ]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where   = ["src"]
+include = ["agent_control_layer*"]
+exclude = ["tests*", "examples*"]

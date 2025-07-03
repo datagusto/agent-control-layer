@@ -28,11 +28,20 @@ def _is_rule_triggered(
 
     safe_locals = {"tool_output": tool_output}
 
-    if not expression:
+    if not isinstance(expression, str) or not expression.strip():
+        warnings.warn(
+            (
+                "Error evaluating expression: trigger_condition must be a non-empty "
+                f"string, but got {type(expression)}"
+            ),
+            stacklevel=2,
+        )
         return False
 
+    restricted_globals = {"__builtins__": {}, **SAFE_GLOBALS}
+
     try:
-        return eval(expression, SAFE_GLOBALS, safe_locals)
+        return eval(expression, restricted_globals, safe_locals)
     except Exception as e:
         warnings.warn(f"Error evaluating expression: {e}", stacklevel=2)
         return False
@@ -40,16 +49,15 @@ def _is_rule_triggered(
 
 def _evaluate_contract(
     contract: dict[str, Any], tool_output: Union[dict, list, str]
-) -> str:
+) -> dict[str, Any]:
     """Evaluate the contract for a tool."""
-    instruction = "No further instruction."
-
+    instruction = None
     for rule in contract.get("rules", []):
         if _is_rule_triggered(rule, tool_output):
             instruction = rule.get("instruction")
-            break
+            return {"instruction": instruction, "rule": rule}
 
-    return instruction
+    return {"instruction": None, "rule": None}
 
 
 def control_layer(
@@ -58,7 +66,7 @@ def control_layer(
     """Control layer for the agent."""
     contract = _config.get(tool_name)
     if not contract:
-        return {"instruction": "No further instruction."}
+        return {"instruction": None, "rule": None}
 
-    instruction = _evaluate_contract(contract, tool_output)
-    return {"instruction": instruction}
+    result = _evaluate_contract(contract, tool_output)
+    return result
